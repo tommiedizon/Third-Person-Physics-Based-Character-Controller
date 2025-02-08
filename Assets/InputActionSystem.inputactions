@@ -1,0 +1,54 @@
+{
+    "name": "InputActionSystem",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "427da6b8-bdef-43c0-90cc-5ca7fdf32a69",
+            "actions": [
+                {
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "7deef12e-f66b-4fbc-ace1-eed894525a2c",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Zoom",
+                    "type": "Button",
+                    "id": "53100651-4844-4803-92a3-1d904078d999",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "009fe00e-a483-412c-85c7-d35c87db93d7",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c3a20769-bae5-4ffa-b6e0-1dacc5d9fc7a",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
