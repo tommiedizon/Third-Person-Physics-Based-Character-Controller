@@ -3,6 +3,8 @@ using UnityEngine;
 public class Player : MonoBehaviour {
 
     CharacterController characterController;
+    [SerializeField] Transform playerCamera;
+    Vector3 forwardDir;
 
     private void Start() {
         Cursor.lockState = CursorLockMode.Locked;
@@ -16,6 +18,15 @@ public class Player : MonoBehaviour {
     }
 
     private void HandleMovement(Vector2 rawPlayerInput) {
-        Debug.Log(rawPlayerInput);
+        //characterController.SimpleMove(forwardDir);
+    }
+
+    private Vector3 ComputeForwardDirection(Transform playerCamera) {
+        Vector3 vect = transform.position - playerCamera.transform.position;
+        return new Vector3(vect.x, 0, vect.z);
+    }
+
+    private void Update() {
+        forwardDir = ComputeForwardDirection(playerCamera);
     }
 }
