@@ -2,6 +2,7 @@
 
 # Custom
 Assets/ExternalAssets/
+"Assets/TextMesh Pro"
 
 # Unity-specific
 [Ll]ibrary/
@@ -26,6 +27,7 @@ Thumbs.db
 *.pidb
 *.booproj
 *.svd
+.vsconfig
 
 # Ignore crash reports
 [Cc]rash/
