@@ -61,7 +61,7 @@ public partial class @InputActionSystem: IInputActionCollection2, IDisposable
                     ""id"": ""009fe00e-a483-412c-85c7-d35c87db93d7"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
-                    ""processors"": """",
+                    ""processors"": ""InvertVector2(invertX=false)"",
                     ""groups"": """",
                     ""action"": ""Look"",
                     ""isComposite"": false,

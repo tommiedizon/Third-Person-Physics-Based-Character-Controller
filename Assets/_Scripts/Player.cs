@@ -1,3 +1,4 @@
+using System;
 using Unity.Cinemachine;
 using UnityEngine;
 
@@ -6,10 +7,18 @@ public class Player : MonoBehaviour {
     CharacterController controller;
     [SerializeField] CinemachineCamera cam;
 
+    // Singleton
+    public static Player PlayerInstance { get; private set; }
+
+    public bool isWalking;
+
     // Player settings
-    [SerializeField] float speed = 6f;
+    [SerializeField] float walkingSpeed = 6f;
     [SerializeField] float rotateSpeed = 6f;
 
+    private void Awake() {
+        PlayerInstance = this;
+    }
     private void Start() {
         Cursor.lockState = CursorLockMode.Locked;
         controller = GetComponent<CharacterController>();
@@ -26,7 +35,9 @@ public class Player : MonoBehaviour {
         Vector3 perpDir = ComputePerpDirection(forwardDir);
         Vector3 moveDir = (inputVector.y * forwardDir - inputVector.x * perpDir).normalized;
 
-        controller.SimpleMove(moveDir * speed);
+        isWalking = (moveDir != Vector3.zero);
+
+        controller.SimpleMove(moveDir * walkingSpeed);
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
     }
 
