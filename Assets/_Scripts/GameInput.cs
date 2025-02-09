@@ -12,6 +12,7 @@ public class GameInput : MonoBehaviour {
     }
 
     public event EventHandler<OnMovePerformedEventArgs> OnMovePerformed;
+    public event EventHandler OnMoveCanceled;
 
     private void Awake() {
         GameInputInstance = this;
@@ -20,6 +21,11 @@ public class GameInput : MonoBehaviour {
         inputActionSystem = new InputActionSystem();
         inputActionSystem.Player.Enable();
         inputActionSystem.Player.Move.performed += Move_performed;
+        inputActionSystem.Player.Move.canceled += Move_canceled;
+    }
+
+    private void Move_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        OnMoveCanceled?.Invoke(this, EventArgs.Empty);
     }
 
     private void Move_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
