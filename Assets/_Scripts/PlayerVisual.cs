@@ -4,19 +4,20 @@ using UnityEngine;
 public class PlayerVisual : MonoBehaviour {
 
     Animator animator;
-    Player player;
 
-    private void Start() {
+    private void Awake() {
         animator = GetComponent<Animator>();
-        player = Player.PlayerInstance;
-        animator.SetBool("isWalking", player.isWalking);
+    }
+    public void ActivateIdleAnimation() {
+        animator.Play("Idle");
     }
 
+    public void TransitionToWalkAnimation(float fadeDuration) {
+        animator.CrossFade("Walk", fadeDuration);
+    }
 
-    private void Update() {
-        if (animator != null) {
-            animator.SetBool("isWalking", player.isWalking);
-        }
+    public void TransitionToIdleAnimation(float fadeDuration) {
+        animator.CrossFade("Idle", fadeDuration);
     }
 
 }

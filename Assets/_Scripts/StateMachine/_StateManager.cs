@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public abstract class StateManager<EState> : MonoBehaviour where EState : Enum
 {   
-    protected Dictionary<EState, BaseState<EState>> states = new Dictionary<EState, BaseState<EState>>();
+    protected Dictionary<EState, BaseState<EState>> states = new();
 
     protected BaseState<EState> currentState;
 
@@ -16,7 +16,6 @@ public abstract class StateManager<EState> : MonoBehaviour where EState : Enum
 
     private void Update() {
         EState nextStateKey = currentState.GetNextState();
-
         if(!isTransitioningState && nextStateKey.Equals(currentState.StateKey)) {
             currentState.UpdateState();
         } else if (!isTransitioningState) {

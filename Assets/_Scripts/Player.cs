@@ -36,6 +36,7 @@ public class Player : MonoBehaviour {
         Vector3 moveDir = (inputVector.y * forwardDir - inputVector.x * perpDir).normalized;
 
         isWalking = (moveDir != Vector3.zero);
+        Debug.Log(isWalking);
 
         controller.SimpleMove(moveDir * walkingSpeed);
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
