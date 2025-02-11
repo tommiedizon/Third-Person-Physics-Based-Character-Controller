@@ -20,4 +20,8 @@ public class PlayerVisual : MonoBehaviour {
         animator.CrossFade("Idle", fadeDuration);
     }
 
+    public void TransitionToSprintAnimation(float fadeDuration) {
+        animator.CrossFade("Sprint", fadeDuration);
+    }
+
 }

@@ -1,24 +1,24 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-public class WalkState : PlayerMovementState {
-    public WalkState(PlayerMovementContext context, PlayerMovementStateManager.EMoveState stateKey) : base(context, stateKey) {
+public class SprintState : PlayerMovementState {
+    public SprintState(PlayerMovementContext context, PlayerMovementStateManager.EMoveState stateKey) : base(context, stateKey) {
         PlayerMovementContext Context = context;
     }
 
     public override void EnterState() {
-        Context.PlayerVisual.TransitionToWalkAnimation(0.1f);
+        Context.PlayerVisual.TransitionToSprintAnimation(0.1f);
+        Debug.Log("starting sprint");
     }
 
     public override void ExitState() {
-        Debug.Log("Exiting Walk State");
+        Debug.Log("exiting sprint");
     }
 
     public override PlayerMovementStateManager.EMoveState GetNextState() {
-        if (Context.Player.isWalking) {
+        if(Context.Player.isSprinting) {
             return StateKey;
-        } else if(Context.Player.isSprinting){
-            return PlayerMovementStateManager.EMoveState.Sprint;
+        } else if(Context.Player.isWalking) { 
+            return PlayerMovementStateManager.EMoveState.Walk;
         } else {
             return PlayerMovementStateManager.EMoveState.Idle;
         }
@@ -37,6 +37,6 @@ public class WalkState : PlayerMovementState {
     }
 
     public override void UpdateState() {
-        //
+        Debug.Log("Sprinting");
     }
 }

@@ -2230,7 +2230,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 190383482}
   isWalking: 0
+  isSprinting: 0
   walkingSpeed: 6
+  sprintingSpeed: 10
   rotateSpeed: 6
 --- !u!4 &1717388987
 Transform:

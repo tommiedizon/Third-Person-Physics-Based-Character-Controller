@@ -1,10 +1,12 @@
 using NUnit.Framework;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class PlayerMovementStateManager : StateManager<PlayerMovementStateManager.EMoveState>
 {
     [SerializeField] Player player;
     [SerializeField] PlayerVisual playerVisual;
+    [SerializeField] CinemachineCamera playerCamera;
 
     private PlayerMovementContext _context;
     public enum EMoveState {
@@ -17,7 +19,7 @@ public class PlayerMovementStateManager : StateManager<PlayerMovementStateManage
 
     private void Awake() {
         ValidatePlayer();
-        _context = new PlayerMovementContext(player, playerVisual);
+        _context = new PlayerMovementContext(player, playerVisual, playerCamera);
         InitializeStates();
     }
 
@@ -28,6 +30,7 @@ public class PlayerMovementStateManager : StateManager<PlayerMovementStateManage
     private void InitializeStates() {
         states.Add(EMoveState.Idle, new IdleState(_context, EMoveState.Idle));
         states.Add(EMoveState.Walk, new WalkState(_context, EMoveState.Walk));
+        states.Add(EMoveState.Sprint, new SprintState(_context, EMoveState.Sprint));
         currentState = states[EMoveState.Idle];
     }
 

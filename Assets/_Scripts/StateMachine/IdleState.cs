@@ -14,10 +14,13 @@ public class IdleState : PlayerMovementState {
     }
 
     public override PlayerMovementStateManager.EMoveState GetNextState() {
-        if (Context.Player.isWalking)
+        if (Context.Player.isWalking) {
             return PlayerMovementStateManager.EMoveState.Walk;
-        else
+        } else if (Context.Player.isSprinting) {
             return StateKey;
+        } else {
+            return StateKey;
+        }
     }
 
     public override void OnTriggerEnter(Collider other) {
