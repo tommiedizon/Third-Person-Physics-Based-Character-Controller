@@ -15,8 +15,10 @@ public class SimpleStairs : MonoBehaviour {
         Vector3 stairPos = new Vector3(initialStepPos.position.x, 0.5f*stairsHeight, initialStepPos.position.z);
 
         // spawn the number of steps needed
-        for(int i = 0; i < numStairs; i++) {
-            Instantiate(step, stairPos, Quaternion.identity, transform);
+        Color stairColor = new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f));
+        for (int i = 0; i < numStairs; i++) {
+            GameObject newStep = Instantiate(step, stairPos, Quaternion.identity, transform);
+            newStep.GetComponent<Renderer>().material.color = stairColor;
             stairPos.z += stairsWidth;
             stairPos.y += stairsHeight;
         }
