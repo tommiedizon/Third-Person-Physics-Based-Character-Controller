@@ -13,12 +13,19 @@ public class GameInput : MonoBehaviour {
     private void Awake() {
         GameInputInstance = this;
     }
-    private void Start() {
+
+    private void OnEnable() {
         inputActionSystem = new InputActionSystem();
         inputActionSystem.Player.Enable();
 
         inputActionSystem.Player.Sprint.started += Sprint_started;
         inputActionSystem.Player.Sprint.canceled += Sprint_canceled;
+    }
+
+    private void OnDisable() {
+        // do to prevent mem leaks
+        inputActionSystem.Player.Sprint.started -= Sprint_started;
+        inputActionSystem.Player.Sprint.canceled -= Sprint_canceled;
     }
 
     private void Sprint_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj) {

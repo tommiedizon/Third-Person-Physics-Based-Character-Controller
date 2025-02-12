@@ -1834,6 +1834,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1717388986}
   playerVisual: {fileID: 1924793413}
+  playerCamera: {fileID: 190383482}
 --- !u!4 &1488817131
 Transform:
   m_ObjectHideFlags: 0

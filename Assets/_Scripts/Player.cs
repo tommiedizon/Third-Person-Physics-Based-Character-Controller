@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
-    CharacterController controller;
+    Rigidbody _rb;
     [SerializeField] CinemachineCamera cam;
 
     // Singleton
@@ -23,7 +23,7 @@ public class Player : MonoBehaviour {
     }
     private void Start() {
         Cursor.lockState = CursorLockMode.Locked;
-        controller = GetComponent<CharacterController>();
+        _rb = GetComponent<Rigidbody>();
 
         GameInput.GameInputInstance.OnSprintStarted += GameInputInstance_OnSprintStarted;
         GameInput.GameInputInstance.OnSprintCanceled += GameInputInstance_OnSprintCanceled;
@@ -44,9 +44,11 @@ public class Player : MonoBehaviour {
 
         isWalking = (moveDir != Vector3.zero && !isSprinting);
 
-        controller.SimpleMove(moveDir * playerSpeed);
+        Vector3 movement = moveDir * playerSpeed;
+        _rb.AddForce(movement, ForceMode.Acceleration);
+
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
-    }
+    }   
 
     // Helpers
     private Vector3 ComputeForwardDirection() {
