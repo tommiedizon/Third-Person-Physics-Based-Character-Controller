@@ -30,7 +30,7 @@ public class Player : MonoBehaviour {
         GameInput.GameInputInstance.OnSprintCanceled += GameInputInstance_OnSprintCanceled;
     }
 
-    private void Update() {
+    private void FixedUpdate() {
         //HandleMovement();
         HandlePhysicsMovement();
     }

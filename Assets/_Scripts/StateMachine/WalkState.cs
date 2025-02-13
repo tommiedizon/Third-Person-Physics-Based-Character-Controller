@@ -39,4 +39,8 @@ public class WalkState : PlayerMovementState {
     public override void UpdateState() {
         //
     }
+
+    private void Move() {
+        ComputeMoveDirFromGameInput();
+    }
 }
