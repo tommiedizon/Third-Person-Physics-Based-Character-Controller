@@ -1,130 +1,108 @@
 using System;
-using Unity.Cinemachine;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour {
 
+    [SerializeField] Transform cameraTransform;
+    private MoveState moveState;
+    GameInput gameInput;
     Rigidbody _rb;
-    [SerializeField] CinemachineCamera cam;
 
-    // Singleton
-    public static Player PlayerInstance { get; private set; }
+    [SerializeField] Transform playerCentre;
+    [SerializeField] float rayLength;
+    [SerializeField] float buffer;
+    [SerializeField] float springConstant;
+    [SerializeField] float dampingConstant;
+    [SerializeField] float torqueSpringConstant;
+    [SerializeField] float torqueDampingConstant;
 
-    public bool isWalking = false;
-    public bool isSprinting = false;
 
-    // Player settings
-    [SerializeField] float walkingSpeed = 6f;
-    [SerializeField] float sprintingSpeed = 20f;
-    [SerializeField] float rotateSpeed = 6f;
-    [SerializeField] float buffer = 1f;
-
-    private void Awake() {
-        PlayerInstance = this;
+    private enum MoveState {
+        Idle,
+        Walk,
+        Sprint,
+        Jump
     }
-    private void Start() {
+    private void Awake() {
         Cursor.lockState = CursorLockMode.Locked;
-        _rb = GetComponent<Rigidbody>();
+    }
 
-        GameInput.GameInputInstance.OnSprintStarted += GameInputInstance_OnSprintStarted;
-        GameInput.GameInputInstance.OnSprintCanceled += GameInputInstance_OnSprintCanceled;
+    private void Start() {
+        gameInput = GameInput.GameInputInstance;
+        moveState = MoveState.Idle;
+        _rb = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate() {
-        //HandleMovement();
-        HandlePhysicsMovement();
+        Vector2 playerInput = gameInput.GetMovementVectorNormalized();
+        switch (moveState) {
+            case MoveState.Idle:
+                PlayerIdle(playerInput);
+                break;
+            case MoveState.Walk:
+                PlayerWalk(playerInput);
+                break;
+            case MoveState.Sprint:
+                PlayerSprint(playerInput);
+                break;
+        }
     }
 
-    // MAIN Helpers
-    private void HandleMovement() {
-        Vector2 inputVector = GameInput.GameInputInstance.GetMovementVectorNormalized();
-        Vector3 forwardDir = ComputeForwardDirection();
-        Vector3 perpDir = ComputePerpDirection(forwardDir);
-        Vector3 moveDir = (inputVector.y * forwardDir - inputVector.x * perpDir).normalized;
-
-        float playerSpeed = isSprinting ? sprintingSpeed : walkingSpeed;
-
-        isWalking = (moveDir != Vector3.zero && !isSprinting);
-
-        Vector3 movement = moveDir * playerSpeed;
-        _rb.AddForce(movement, ForceMode.Acceleration);
-
-        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
+    private void PlayerIdle(Vector2 playerInput) {
+        if(playerInput != Vector2.zero) {
+            moveState = MoveState.Walk;
+        }
     }
+    private float rotationSpeed = 10f;
+    [SerializeField] private float walkingSpeed = 2f;
+    private float acceleration = 10f;
+    private void PlayerWalk(Vector2 playerInput) {
 
-    [SerializeField] float springConstant = 85f;
-    [SerializeField] float dampingConstant = 25f;
-    [SerializeField] float clearance = 1.1f;
-    [SerializeField] Transform clearanceOriginPoint;
-    private void HandlePhysicsMovement() {
-        Vector2 inputVector = GameInput.GameInputInstance.GetMovementVectorNormalized();
-        Vector3 forwardDir = ComputeForwardDirection();
-        Vector3 perpDir = ComputePerpDirection(forwardDir);
-        Vector3 moveDir = (inputVector.y * forwardDir - inputVector.x * perpDir).normalized;
-
-        float playerSpeed = isSprinting ? sprintingSpeed : walkingSpeed;
-
-        isWalking = (moveDir != Vector3.zero && !isSprinting);
-
-        Vector3 targetVelocity = moveDir * playerSpeed;
-        Vector3 deltaVelocity = targetVelocity - _rb.linearVelocity;
-        float acceleration = 10f;
-        deltaVelocity.y = 0; //ignore gravity for now
-
-        // Spring action on Y MOVEMENT 
-        CapsuleCollider collider = GetComponent<CapsuleCollider>();
-
-        Vector3 origin = clearanceOriginPoint.position;
-        Vector3 direction = Vector3.down;
-        Ray ray = new Ray(origin, direction);
-        
+        // Spring code
+        Ray ray = new(playerCentre.position, Vector3.down);
         Color rayColor = Color.red;
 
-        // Perform the Raycast
-        if (Physics.Raycast(origin, direction, out RaycastHit hit, clearance)) {
-            Debug.Log("Hit: " + hit.collider.name);
-            rayColor = Color.green; // Change color when hitting something
-
+        if (Physics.Raycast(ray, out RaycastHit hit, rayLength)) {
+            rayColor = Color.green;
             float surfaceHeight = hit.distance + buffer;
-
-
-            Vector3 springForce = new Vector3(0f, clearance - surfaceHeight, 0f);
+            Vector3 springForce = new Vector3(0f, rayLength - surfaceHeight, 0f);
             Vector3 yVel = new Vector3(0f, _rb.linearVelocity.y, 0f);
 
             _rb.AddForce(springConstant * springForce - dampingConstant * yVel);
-
         }
 
-        Debug.DrawRay(origin, direction * clearance, rayColor);
+        Vector3 surfaceNormal = hit.normal;
+        var springTorque = torqueSpringConstant * Vector3.Cross(_rb.transform.up, hit.normal);
+        var dampTorque = torqueDampingConstant * -_rb.angularVelocity;
+        _rb.AddTorque(springTorque + dampTorque, ForceMode.Acceleration);
 
 
-        _rb.AddForce(deltaVelocity * acceleration, ForceMode.Acceleration);
+        Debug.DrawRay(playerCentre.position, Vector3.down * rayLength, rayColor);
+
+        // Translation code
+        Vector3 forwardDir = transform.position - cameraTransform.transform.position;
+        Vector3 perpDir = Vector3.Cross(forwardDir, Vector3.up);
+        Vector3 moveDir = forwardDir * playerInput.y - perpDir * playerInput.x;
+
+        // project onto surface
+        moveDir = Vector3.ProjectOnPlane(moveDir, surfaceNormal);
+
+        float speedDiff = walkingSpeed - _rb.linearVelocity.magnitude;
+ 
+        _rb.AddForce(moveDir * speedDiff * acceleration, ForceMode.Acceleration);
+        Debug.DrawRay(transform.position, moveDir * speedDiff, rayColor);
+
 
         if (moveDir != Vector3.zero) {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-            _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, Time.deltaTime * rotateSpeed));
+            Quaternion moveRotation = Quaternion.LookRotation(moveDir);
+            _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, moveRotation, rotationSpeed * Time.fixedDeltaTime));
         }
 
-    } 
-
-    // Helpers
-    private Vector3 ComputeForwardDirection() {
-        Vector3 vect = transform.position - cam.transform.position;
-        return new Vector3(vect.x, 0, vect.z).normalized;
+    }
+    private void PlayerSprint(Vector2 playerInput) {
+        Debug.Log("Sprinting");
     }
 
-    private Vector3 ComputePerpDirection(Vector3 forwardDir) {
-        return Vector3.Cross(forwardDir, Vector3.up).normalized;
-    }
-
-
-    // Event Listeners
-    private void GameInputInstance_OnSprintCanceled(object sender, EventArgs e) {
-        isSprinting = false;
-    }
-
-    private void GameInputInstance_OnSprintStarted(object sender, EventArgs e) {
-        isSprinting = true;
-    }
 }
