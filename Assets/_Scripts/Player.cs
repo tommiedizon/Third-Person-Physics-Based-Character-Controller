@@ -17,7 +17,8 @@ public class Player : MonoBehaviour {
     // Player settings
     [SerializeField] float walkingSpeed = 6f;
     [SerializeField] float sprintingSpeed = 20f;
-    [SerializeField] float rotateSpeed = 6f; 
+    [SerializeField] float rotateSpeed = 6f;
+    [SerializeField] float buffer = 1f;
 
     private void Awake() {
         PlayerInstance = this;
@@ -50,8 +51,12 @@ public class Player : MonoBehaviour {
         _rb.AddForce(movement, ForceMode.Acceleration);
 
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
-    }   
+    }
 
+    [SerializeField] float springConstant = 85f;
+    [SerializeField] float dampingConstant = 25f;
+    [SerializeField] float clearance = 1.1f;
+    [SerializeField] Transform clearanceOriginPoint;
     private void HandlePhysicsMovement() {
         Vector2 inputVector = GameInput.GameInputInstance.GetMovementVectorNormalized();
         Vector3 forwardDir = ComputeForwardDirection();
@@ -67,6 +72,31 @@ public class Player : MonoBehaviour {
         float acceleration = 10f;
         deltaVelocity.y = 0; //ignore gravity for now
 
+        // Spring action on Y MOVEMENT 
+        CapsuleCollider collider = GetComponent<CapsuleCollider>();
+
+        Vector3 origin = clearanceOriginPoint.position;
+        Vector3 direction = Vector3.down;
+        Ray ray = new Ray(origin, direction);
+        
+        Color rayColor = Color.red;
+
+        // Perform the Raycast
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, clearance)) {
+            Debug.Log("Hit: " + hit.collider.name);
+            rayColor = Color.green; // Change color when hitting something
+
+            float surfaceHeight = hit.distance + buffer;
+
+
+            Vector3 springForce = new Vector3(0f, clearance - surfaceHeight, 0f);
+            Vector3 yVel = new Vector3(0f, _rb.linearVelocity.y, 0f);
+
+            _rb.AddForce(springConstant * springForce - dampingConstant * yVel);
+
+        }
+
+        Debug.DrawRay(origin, direction * clearance, rayColor);
 
 
         _rb.AddForce(deltaVelocity * acceleration, ForceMode.Acceleration);
@@ -76,7 +106,7 @@ public class Player : MonoBehaviour {
             _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, targetRotation, Time.deltaTime * rotateSpeed));
         }
 
-    }
+    } 
 
     // Helpers
     private Vector3 ComputeForwardDirection() {
