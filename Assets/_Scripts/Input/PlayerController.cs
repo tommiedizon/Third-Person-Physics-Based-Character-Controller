@@ -23,6 +23,9 @@ namespace CharacterControllerFactory {
 
         float currentSpeed, velocity; // Why is velocity a float??
 
+        // Animator parameters
+        static readonly int Speed = Animator.StringToHash("Speed");
+
         private void Awake() {
             mainCam = Camera.main.transform;
 
@@ -32,9 +35,18 @@ namespace CharacterControllerFactory {
             freeLookVCam.OnTargetObjectWarped(transform, transform.position - freeLookVCam.transform.position - Vector3.forward);
         }
 
+        private void Start() {
+            input.EnablePlayerActions();
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
         private void Update() {
             HandleMovement();
-            //UpdateAnimator();
+            UpdateAnimator();
+        }
+
+        private void UpdateAnimator() {
+            animator.SetFloat(Speed, currentSpeed);
         }
 
         private void HandleMovement() {
@@ -54,8 +66,9 @@ namespace CharacterControllerFactory {
         private void HandleRotation(Vector3 adjustedDirection) {
             // Adjust rotation to match movement direction
             var targetRotation = Quaternion.LookRotation(adjustedDirection); // Creates rotation from world up (0,1,0) to specified rotation
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-            // transform.LookAt(transform.position + adjustedDirection); (ALTERNATE WAY TO ROTATE PLAYER) 
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+
         }
         private void HandleCharacterController(Vector3 adjustedDirection) {
             // Move the player

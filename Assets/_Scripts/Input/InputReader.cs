@@ -23,6 +23,9 @@ namespace CharacterControllerFactory {
                 inputActions = new PlayerInputActions();
                 inputActions.Player.SetCallbacks(this); // generated function that assigns an IPlayerActions interface implementation.
             }
+        }
+
+        public void EnablePlayerActions() {
             inputActions.Enable();
         }
 

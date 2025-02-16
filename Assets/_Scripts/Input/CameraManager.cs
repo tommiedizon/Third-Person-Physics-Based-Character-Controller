@@ -8,18 +8,19 @@ namespace CharacterControllerFactory {
     public class CameraManager : MonoBehaviour {
         [SerializeField, Anywhere] InputReader input;
         [SerializeField, Anywhere] CinemachineCamera freeLookVCam;
+        CinemachineOrbitalFollow orbitalFollow;
 
         [Header("Settings")]
-        [SerializeField, Range(0.5f, 3f)] float speedMultiplier;
+        [SerializeField, Range(0.5f, 3f)] float speedMultiplier = 1f;
 
         bool isRMBPressed;
-        bool isDeviceMouse;
         bool cameraMovementLock;
 
         private void OnEnable() {
             input.Look += OnLook;
             input.EnableMouseControlCamera += OnEnableMouseControlCamera;
             input.DisableMouseControlCamera += OnDisableMouseControlCamera;
+            orbitalFollow = freeLookVCam.GetComponent<CinemachineOrbitalFollow>();
         }
 
         private void OnDisable() {
@@ -35,7 +36,9 @@ namespace CharacterControllerFactory {
             Cursor.visible = true;
 
             // Reset the camera axis to prevent jumping when re-enabling mouse control
-            freeLookVCam.transform.rotation = Quaternion.identity;
+            orbitalFollow.HorizontalAxis.Value = 0f;
+            orbitalFollow.VerticalAxis.Value = 0f;
+
         }
 
         private void OnEnableMouseControlCamera() {
@@ -53,8 +56,18 @@ namespace CharacterControllerFactory {
             cameraMovementLock = false;
         }
 
-        private void OnLook(Vector2 arg0, bool arg1) {
-            throw new NotImplementedException();
+        private void OnLook(Vector2 cameraMovement, bool isDeviceMouse) {
+            if (cameraMovementLock) return;
+
+            if (isDeviceMouse && !isRMBPressed) return;
+
+            // If device is a mouse, use Time.fixedDeltaTime, otherwise use Time.deltaTime. Why?
+            float deviceMultiplier = isDeviceMouse ? Time.fixedDeltaTime : Time.deltaTime;
+
+            // Set the camera axis values
+            orbitalFollow.HorizontalAxis.Value = cameraMovement.x * speedMultiplier * deviceMultiplier;
+            orbitalFollow.VerticalAxis.Value = cameraMovement.y * speedMultiplier * deviceMultiplier;
+
         }
     }
 
