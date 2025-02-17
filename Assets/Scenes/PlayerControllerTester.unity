@@ -815,7 +815,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 164354279}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15007402, y: 0.012665555, z: -0.0019227053, w: 0.9885918}
+  m_LocalRotation: {x: 0.15007508, y: 0.012104385, z: -0.0018375161, w: 0.9885988}
   m_LocalPosition: {x: -0.2072051, y: 2.25, z: -7.2370343}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1099,7 +1099,7 @@ GameObject:
   - component: {fileID: 193900059}
   - component: {fileID: 193900058}
   - component: {fileID: 193900057}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1207,7 +1207,7 @@ GameObject:
   - component: {fileID: 211554940}
   - component: {fileID: 211554939}
   - component: {fileID: 211554938}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2035,7 +2035,7 @@ GameObject:
   - component: {fileID: 447180532}
   - component: {fileID: 447180531}
   - component: {fileID: 447180530}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3611,7 +3611,7 @@ GameObject:
   - component: {fileID: 810664232}
   - component: {fileID: 810664231}
   - component: {fileID: 810664230}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4056,7 +4056,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1031314932}
-  - component: {fileID: 1031314933}
   m_Layer: 0
   m_Name: CameraSystem
   m_TagString: Untagged
@@ -4082,21 +4081,6 @@ Transform:
   - {fileID: 164354280}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1031314933
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1031314931}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 595bbc022da51e945b614d7ae6c167fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  input: {fileID: 11400000, guid: e3c360673aaa8ae4a90907e810ca5759, type: 2}
-  freeLookVCam: {fileID: 164354285}
-  speedMultiplier: 0.5
 --- !u!1 &1115511603
 GameObject:
   m_ObjectHideFlags: 0
@@ -4517,7 +4501,7 @@ GameObject:
   - component: {fileID: 1266481815}
   - component: {fileID: 1266481814}
   - component: {fileID: 1266481813}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5305,7 +5289,7 @@ GameObject:
   - component: {fileID: 1433203442}
   - component: {fileID: 1433203441}
   - component: {fileID: 1433203440}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5521,8 +5505,28 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 7413344840680693326, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
   m_PrefabInstance: {fileID: 1657877788}
   m_PrefabAsset: {fileID: 0}
---- !u!143 &1456124259
-CharacterController:
+--- !u!114 &1456124262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456124256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc9973a7b43fd954d86d0479280b4809, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rb: {fileID: 1456124264}
+  animator: {fileID: 1456124258}
+  freeLookVCam: {fileID: 164354285}
+  input: {fileID: 11400000, guid: e3c360673aaa8ae4a90907e810ca5759, type: 2}
+  groundChecker: {fileID: 1456124265}
+  moveSpeed: 300
+  rotationSpeed: 15
+  smoothTime: 0.2
+--- !u!136 &1456124263
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5536,17 +5540,42 @@ CharacterController:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 1.57
-  m_Radius: 0.36
-  m_SlopeLimit: 45
-  m_StepOffset: 0.5
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.72, z: 0}
---- !u!114 &1456124260
+  serializedVersion: 2
+  m_Radius: 0.42
+  m_Height: 1.48
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.69, z: 0}
+--- !u!54 &1456124264
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1456124256}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!114 &1456124265
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5555,16 +5584,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1456124256}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 35797f37aafb2e5408b8b57bacd9fb70, type: 3}
+  m_Script: {fileID: 11500000, guid: 334c6afcb3a01574ba70c58cadf825ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 1456124259}
-  animator: {fileID: 1456124258}
-  freeLookVCam: {fileID: 164354285}
-  input: {fileID: 11400000, guid: e3c360673aaa8ae4a90907e810ca5759, type: 2}
-  moveSpeed: 6
-  rotationSpeed: 6.53
-  smoothTime: 0.25
+  groundDistance: 0.04
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &1483281200
 GameObject:
   m_ObjectHideFlags: 0
@@ -6212,7 +6238,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1546121190}
   - component: {fileID: 1546121189}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SimpleStairs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6443,7 +6469,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1605576458}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.15007405, y: 0.012665557, z: -0.0019227058, w: 0.9885918}
+  m_LocalRotation: {x: 0.15007508, y: 0.012104385, z: -0.0018375166, w: 0.9885988}
   m_LocalPosition: {x: -0.2072051, y: 2.25, z: -7.2370343}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -6996,10 +7022,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1456124260}
+      addedObject: {fileID: 1456124264}
     - targetCorrespondingSourceObject: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1456124259}
+      addedObject: {fileID: 1456124263}
+    - targetCorrespondingSourceObject: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1456124262}
+    - targetCorrespondingSourceObject: {fileID: 7647134206250791342, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1456124265}
   m_SourcePrefab: {fileID: 100100000, guid: cc91c8ba8b9a34f4d99e70d721f60b64, type: 3}
 --- !u!1 &1674464769
 GameObject:
@@ -7098,7 +7130,7 @@ GameObject:
   - component: {fileID: 1677175149}
   - component: {fileID: 1677175148}
   - component: {fileID: 1677175147}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Sphere (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7477,7 +7509,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1795834247}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: UnevenGround
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8226,7 +8258,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2050562940}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SimpleRamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}

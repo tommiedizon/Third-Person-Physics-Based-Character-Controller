@@ -4,7 +4,9 @@ using Unity.Cinemachine;
 using System;
 
 namespace CharacterControllerFactory {
-    public class PlayerController : ValidatedMonoBehaviour {
+
+    [RequireComponent (typeof (CharacterController))] 
+    public class TPPlayerControllerNoPhysics : ValidatedMonoBehaviour {
 
         const float Zerof = 0f;
 
