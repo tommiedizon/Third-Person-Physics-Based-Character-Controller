@@ -13,6 +13,7 @@ namespace CharacterControllerFactory {
         public event UnityAction<Vector2, bool> Look = delegate { };
         public event UnityAction EnableMouseControlCamera = delegate { };
         public event UnityAction DisableMouseControlCamera = delegate { };
+        public event UnityAction<bool> Jump = delegate { };
 
         PlayerInputActions inputActions;
 
@@ -58,7 +59,7 @@ namespace CharacterControllerFactory {
         }
 
         public void OnMove(InputAction.CallbackContext context) {
-            Move.Invoke(context.ReadValue<Vector2>());
+           Move.Invoke(context.ReadValue<Vector2>());
         }
 
         public void OnSprint(InputAction.CallbackContext context) {
@@ -74,7 +75,14 @@ namespace CharacterControllerFactory {
         }
 
         public void OnJump(InputAction.CallbackContext context) {
-            // noop
+            switch (context.phase) {
+                case InputActionPhase.Started:
+                    Jump.Invoke(true);
+                    break;
+                case InputActionPhase.Canceled:
+                    Jump.Invoke(false);
+                    break;
+            }
         }
     }
 
