@@ -11,7 +11,7 @@ namespace CharacterControllerFactory {
     [RequireComponent (typeof(CapsuleCollider))]
     [RequireComponent (typeof(GroundChecker))]
     [RequireComponent (typeof(PlatformCollisionHandler))] // optional if you want moving platforms
-    public partial class TPPlayerControllerWithPhysics : ValidatedMonoBehaviour {
+    public partial class TPPlayerControllerWithPhysicsDraft : ValidatedMonoBehaviour {
 
         const float Zerof = 0f;
 
@@ -31,7 +31,6 @@ namespace CharacterControllerFactory {
         [SerializeField] float jumpForce = 10f;
         [SerializeField] float jumpCooldown = 0f;
         [SerializeField] float jumpDuration = 0.5f;
-        [SerializeField] float jumpMaxHeight = 2f;
         [SerializeField] float gravityMultiplier = 1f;
 
         [Header("Debug Variables")]
@@ -45,7 +44,8 @@ namespace CharacterControllerFactory {
         private List<Timer> timers;
         CountdownTimer jumpTimer;
         CountdownTimer jumpCooldownTimer;
-        
+
+        StateMachine stateMachine;
 
         // Animator parameters
         static readonly int Speed = Animator.StringToHash("Speed");
@@ -64,9 +64,27 @@ namespace CharacterControllerFactory {
             jumpCooldownTimer = new CountdownTimer(jumpCooldown);
             timers = new List<Timer>(2) {jumpTimer, jumpCooldownTimer };
 
+            jumpTimer.OnTimerStart += () => jumpVelocity = jumpForce;
             jumpTimer.OnTimerStop += () => jumpCooldownTimer.Start();
 
+            // State machine initialisation
+            stateMachine = new StateMachine();
+
+            // Declare states
+            IState locomotionState = new LocomotionState(this, animator);
+            IState jumpState = new JumpState(this, animator);
+
+            // Define transitions
+            At(locomotionState, jumpState, new FuncPredicate(() => jumpTimer.IsRunning));
+            At(jumpState, locomotionState, new FuncPredicate(() => true));
+
+            // Set initial state
+            stateMachine.SetState(locomotionState);
+
         }
+
+        void At(IState from, IState to, IPredicate condition) => stateMachine.AddTransition(from, to, condition);
+        //void Any(IState to, IPredicate condition) => stateMachine.AddAnyTranstiion(to, condition);
 
         private void OnEnable() {
             input.Jump += OnJump;
@@ -90,9 +108,9 @@ namespace CharacterControllerFactory {
         }
         private void Update() {
             movement = new Vector3(input.Direction.x, 0f, input.Direction.y);
+            stateMachine.Update();
             UpdateAnimator();
             HandleTimers();
-            HandleJump();
         }
 
         private void HandleTimers() {
@@ -101,7 +119,7 @@ namespace CharacterControllerFactory {
             }
         }
 
-        private void HandleJump() {
+        public void HandleJump() {
             // If not jumping and grounded, keep jump vel at 0
             if (!jumpTimer.IsRunning && groundChecker.IsGrounded) {
                 jumpVelocity = Zerof;
@@ -111,16 +129,6 @@ namespace CharacterControllerFactory {
 
             // If jumping or falling, calculate velocity
             if (jumpTimer.IsRunning) {
-                float launchPoint = 0.9f;
-
-                if(jumpTimer.Progress > launchPoint) {
-                    // Calc vel required to reach the jumpHeight using Physics
-                    jumpVelocity = Mathf.Sqrt(2*jumpMaxHeight + Mathf.Abs(Physics.gravity.y));
-                } else {
-                    // Gradually apply less velocity as the jump progresses
-                    jumpVelocity += (1 - jumpTimer.Progress) * jumpForce * Time.fixedDeltaTime;
-                }
-            } else {
                 // Gravity takes over
                 jumpVelocity += Physics.gravity.y * gravityMultiplier * Time.fixedDeltaTime;
             }
@@ -130,13 +138,12 @@ namespace CharacterControllerFactory {
         }
 
         private void FixedUpdate() {
-            HandleMovement();
-            HandleJump();
+            stateMachine.FixedUpdate();
         }
         private void UpdateAnimator() {
             animator.SetFloat(Speed, currentSpeed);
         }
-        private void HandleMovement() {
+        public void HandleMovement() {
             var adjustedDirection = Quaternion.AngleAxis(mainCam.eulerAngles.y, Vector3.up) * movement; // basically [camera coords] - [transform] * moveDir in 1 line. 
 
             if (adjustedDirection.magnitude > Zerof) {
