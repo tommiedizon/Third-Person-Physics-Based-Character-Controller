@@ -1,6 +1,8 @@
 # Third-Person Physics-Based Character Controller
 
 A responsive, physics-driven third-person character controller designed for immersive and natural movement in Unity. This system integrates rigidbody physics to provide realistic interactions while maintaining precise player control. 
+## Demo of current state (Click to watch!)
+[![Procedural Terrain Demo](thumbnail_TPSPBCC.png)](https://drive.google.com/file/d/1ZupTQec9_AhBBzHgQ18--6Ea0VsHZwAM/view?usp=drive_link)
 
 ## Features
 - **Physics-Based Movement**: Uses forces and torques for natural locomotion.
@@ -31,15 +33,6 @@ A responsive, physics-driven third-person character controller designed for imme
 - **Multiplayer Compatibility**: Sync movement for networked players.
 - **Camera Collisions**: Detect collisions and adjust the camera to avoid obstacles.
 
-## Contributing
-Contributions are welcome! Feel free to submit pull requests or report issues.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## Contact
-For questions or feedback, reach out via GitHub Issues or connect on LinkedIn/Twitter.
+For questions or feedback, reach out via GitHub Issues or @ thomasjdizon@gmail.com
 
----
-
-Enjoy developing with realistic physics-based movement! 🚀
